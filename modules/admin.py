@@ -7,6 +7,7 @@ Handles administrator operations for destinations and packages.
 from database.connection import DatabaseConnection
 from modules.destination_manager import DestinationManager
 from modules.package_manager import PackageManager
+from modules.reports import Reports
 
 
 class Admin:
@@ -39,7 +40,7 @@ class Admin:
                 print("Booking management will be connected next.")
 
             elif choice == "4":
-                print("Reports will be connected next.")
+                self.view_reports()
 
             elif choice == "0":
                 print("Admin logged out successfully.")
@@ -47,6 +48,41 @@ class Admin:
 
             else:
                 print("Invalid choice. Please try again.")
+
+    def view_reports(self):
+        """Display available booking reports."""
+
+        connection = DatabaseConnection().get_connection()
+
+        if connection is None:
+            print("Database connection failed.")
+            return
+
+        try:
+            reports = Reports(connection)
+
+            while True:
+                print("\n--- VIEW REPORTS ---")
+                print("1. Confirmed Booking Revenue")
+                print("2. Package Booking Count")
+                print("0. Back to Admin Menu")
+
+                choice = input("Enter your choice: ").strip()
+
+                if choice == "1":
+                    reports.total_booking_revenue()
+
+                elif choice == "2":
+                    reports.package_booking_count()
+
+                elif choice == "0":
+                    break
+
+                else:
+                    print("Invalid choice. Please try again.")
+
+        finally:
+            connection.close()
 
     def manage_destinations(self):
         """Add, view, update and delete destinations."""
@@ -157,7 +193,7 @@ class Admin:
                     break
 
                 else:
-                    print("Invalid choice.")
+                    print("Invalid choice. Please try again.")
 
         finally:
             connection.close()
@@ -287,7 +323,10 @@ class Admin:
                             continue
 
                     except (ValueError, KeyError):
-                        print("Enter valid package, destination and sequence values.")
+                        print(
+                            "Enter valid package, destination "
+                            "and sequence values."
+                        )
                         continue
 
                     manager.link_destination(
