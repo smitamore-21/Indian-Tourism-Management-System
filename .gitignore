@@ -1,0 +1,10 @@
+
+.env
+.venv/
+Myenv/
+__pycache__/
+*.py[cod]
+.DS_Store
+backup_before_duplicate_fix.sql
+*.save
+database/setup_database_backup.py
